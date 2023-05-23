@@ -1,0 +1,39 @@
+version: '3.9'
+networks:
+  mynet:
+
+volumes:
+  mariadb_data:
+  phpmyadmin_data:
+  container-volume:
+
+services:
+  aulac:
+    build: .
+    container_name: aulac
+    volumes:
+      - .:/aulac
+    ports:
+      - 8000:80
+
+  db:
+    image: mariadb:latest
+    restart: always
+    hostname: banco
+    container_name: mysql
+    command: mysqld --sql_mode=""
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: pdv
+      # MYSQL_DATABASE: crud
+    volumes:
+      # - ./crud.sql:/docker-entrypoint-initdb.d/crud.sql
+      - ./pdv.sql:/docker-entrypoint-initdb.d/pdv.sql
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
